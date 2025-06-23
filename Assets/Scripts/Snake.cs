@@ -3,8 +3,9 @@ using UnityEngine;
 
 public class Snake : MonoBehaviour
 {
-    [SerializeField] private float moveRate = 1f; // Tiempo entre movimientos (velocidad)
+    [SerializeField] private float moveRate; // Tiempo entre movimientos (velocidad)
     [SerializeField] private Transform segmentPrefab;
+    [SerializeField] GameManager gameManager;
 
     private Vector2 direction;
     private Vector2 nextDirection;
@@ -36,6 +37,10 @@ public class Snake : MonoBehaviour
             nextDirection = Vector2.left;
         else if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) && direction != Vector2.left)
             nextDirection = Vector2.right;
+        else if (Input.GetKey(KeyCode.P))
+        {
+            gameManager.PauseGame();
+        }
     }
 
     void FixedUpdate()
@@ -66,13 +71,15 @@ public class Snake : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Wall"))
+        if (other.CompareTag("Wall") || other.CompareTag("SnakeSegment"))
         {
+            gameManager.SetGameOver();
             Destroy(this.gameObject);
         }
         else if (other.CompareTag("Food"))
         {
             Grow();
+            gameManager.AddScore(1);
         }
     }
 }

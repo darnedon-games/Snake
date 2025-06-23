@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private GameObject gameOverCanvas;
     [SerializeField] private GameObject pauseCanvas;
+    [SerializeField] private Snake snake;
     private int currentScore = 0;
 
     //public int CurrentScore { get => currentScore; set => currentScore = value; }
@@ -19,12 +20,16 @@ public class GameManager : MonoBehaviour
     
     private void ChangeLevel()
     {
-        
+        Debug.Log("Cambio de nivel");
     }
 
     public void AddScore(int score)
     {
         currentScore = score + currentScore;
+        if (currentScore >= 20)
+        {
+            ChangeLevel();
+        }
         scoreText.text = currentScore.ToString();
     }
 

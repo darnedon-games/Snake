@@ -13,12 +13,14 @@ public class Snake : MonoBehaviour
     private List<Transform> segments;
     private Vector2 currentGridPos;
 
+    public float MoveRate { get => moveRate; set => moveRate = value; }
+
     void Start()
     {
         segments = new List<Transform>();
         segments.Add(this.transform);
         
-        moveTimer = moveRate;
+        moveTimer = MoveRate;
 
         int randX = Random.Range(-15, 15);
         int randY = Random.Range(-7, 7);
@@ -48,7 +50,7 @@ public class Snake : MonoBehaviour
         moveTimer -= Time.fixedDeltaTime;
         if (moveTimer > 0f) return;
 
-        moveTimer = moveRate; // Reset timer
+        moveTimer = MoveRate; // Reset timer
         direction = nextDirection;
 
         // Mover cuerpo de atrás hacia adelante
@@ -60,6 +62,16 @@ public class Snake : MonoBehaviour
         // Mover cabeza
         currentGridPos += direction;
         transform.position = new Vector3(currentGridPos.x, currentGridPos.y, 0f);
+
+        // Verificar si la cabeza colisiona con alguna parte del cuerpo
+        for (int i = 1; i < segments.Count; i++)
+        {
+            if (segments[i].position == transform.position)
+            {
+                gameManager.SetGameOver();
+                Destroy(this.gameObject);
+            }
+        }
     }
 
     private void Grow()
@@ -71,7 +83,7 @@ public class Snake : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Wall") || other.CompareTag("SnakeSegment"))
+        if (other.CompareTag("Wall"))
         {
             gameManager.SetGameOver();
             Destroy(this.gameObject);

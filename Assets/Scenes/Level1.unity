@@ -3339,6 +3339,7 @@ MonoBehaviour:
   scoreText: {fileID: 1114797435}
   gameOverCanvas: {fileID: 1213326517}
   pauseCanvas: {fileID: 1157555459}
+  snake: {fileID: 489355796}
 --- !u!4 &1902829287
 Transform:
   m_ObjectHideFlags: 0

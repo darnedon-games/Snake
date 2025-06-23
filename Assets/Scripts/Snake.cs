@@ -1,51 +1,60 @@
 using System.Collections.Generic;
-using NUnit.Framework;
 using UnityEngine;
 
 public class Snake : MonoBehaviour
 {
-    [SerializeField] private float speed;
+    [SerializeField] private float moveRate = 1f; // Tiempo entre movimientos (velocidad)
     [SerializeField] private Transform segmentPrefab;
-    private Vector2 direction;
-    private Vector2 lastDirection;
-    private List<Transform> segments;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private Vector2 direction;
+    private Vector2 nextDirection;
+    private float moveTimer;
+    private List<Transform> segments;
+    private Vector2 currentGridPos;
+
     void Start()
     {
         segments = new List<Transform>();
         segments.Add(this.transform);
+        
+        moveTimer = moveRate;
+
+        int randX = Random.Range(-15, 15);
+        int randY = Random.Range(-7, 7);
+        currentGridPos = new Vector2(randX + 0.5f, randY + 0.5f);
+        transform.position = currentGridPos;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            direction = Vector2.up;
-        }
-        else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)){
-            direction = Vector2.down;
-        }
-        else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            direction = Vector2.left;
-        }
-        else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            direction = Vector2.right;
-        }
+        // Capturar la dirección pero sin actualizarla
+        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)) && direction != Vector2.down)
+            nextDirection = Vector2.up;
+        else if ((Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)) && direction != Vector2.up)
+            nextDirection = Vector2.down;
+        else if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) && direction != Vector2.right)
+            nextDirection = Vector2.left;
+        else if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) && direction != Vector2.left)
+            nextDirection = Vector2.right;
     }
 
-    private void FixedUpdate()
+    void FixedUpdate()
     {
-        lastDirection = direction;
+        moveTimer -= Time.fixedDeltaTime;
+        if (moveTimer > 0f) return;
 
-        for (int i = segments.Count - 1; i > 0; i--) 
+        moveTimer = moveRate; // Reset timer
+        direction = nextDirection;
+
+        // Mover cuerpo de atrás hacia adelante
+        for (int i = segments.Count - 1; i > 0; i--)
         {
             segments[i].position = segments[i - 1].position;
         }
-        transform.Translate(new Vector2(direction.x,direction.y).normalized * speed * Time.deltaTime);
+
+        // Mover cabeza
+        currentGridPos += direction;
+        transform.position = new Vector3(currentGridPos.x, currentGridPos.y, 0f);
     }
 
     private void Grow()

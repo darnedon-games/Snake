@@ -48,7 +48,8 @@ public class Spawner : MonoBehaviour
         {
             int randX = Random.Range(-15, 15);
             int randY = Random.Range(-7, 7);
-            Vector3 randomPoint = new Vector3(randX + 0.5f, randY + 0.5f, 0f);
+            //Vector3 randomPoint = new Vector3(randX + 0.5f, randY + 0.5f, 0f);
+            Vector3 randomPoint = new Vector3(randX, randY, 0f);
             Food copy = foodPool.Get();
             copy.transform.position = randomPoint;
             yield return new WaitForSeconds(2f);

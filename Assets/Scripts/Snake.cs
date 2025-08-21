@@ -6,6 +6,10 @@ public class Snake : MonoBehaviour
     [SerializeField] private float moveRate; // Tiempo entre movimientos (velocidad)
     [SerializeField] private Transform segmentPrefab;
     [SerializeField] GameManager gameManager;
+    [SerializeField] private Transform teletransportTop;
+    [SerializeField] private Transform teletransportBottom;
+    [SerializeField] private Transform teletransportLeft;
+    [SerializeField] private Transform teletransportRight;
 
     private Vector2 direction;
     private Vector2 nextDirection;
@@ -22,9 +26,11 @@ public class Snake : MonoBehaviour
         
         moveTimer = MoveRate;
 
-        int randX = Random.Range(-15, 15);
-        int randY = Random.Range(-7, 7);
-        currentGridPos = new Vector2(randX + 0.5f, randY + 0.5f);
+        //int randX = Random.Range(-15, 15);
+        //int randY = Random.Range(-7, 7);
+        //currentGridPos = new Vector2(randX + 0.5f, randY + 0.5f);
+        //currentGridPos = new Vector2(0 + 0.5f, 0 + 0.5f);
+        currentGridPos = new Vector2(0, 0);
         transform.position = currentGridPos;
     }
 
@@ -92,6 +98,29 @@ public class Snake : MonoBehaviour
         {
             Grow();
             gameManager.AddScore(1);
+        }
+        else if (other.CompareTag("Teletransport"))
+        {
+            if (other.transform == teletransportTop)
+            {
+                transform.position = teletransportBottom.position + (new Vector3(0,1f,0));
+                currentGridPos = teletransportBottom.position + (new Vector3(0, 1f, 0));
+            }
+            else if (other.transform == teletransportBottom)
+            {
+                transform.position = teletransportTop.position - (new Vector3(0, 1f, 0));
+                currentGridPos = teletransportTop.position - (new Vector3(0, 1f, 0));
+            }
+            else if (other.transform == teletransportLeft)
+            {
+                transform.position = teletransportRight.position - (new Vector3(1f, 0, 0));
+                currentGridPos = teletransportRight.position - (new Vector3(1f, 0, 0));
+            }
+            else if (other.transform == teletransportRight)
+            {
+                transform.position = teletransportLeft.position + (new Vector3(1f, 0, 0));
+                currentGridPos = teletransportLeft.position + (new Vector3(1f, 0, 0));
+            }
         }
     }
 }

@@ -46,5 +46,6 @@ public class GameManager : MonoBehaviour
     public void SetGameOver()
     {
         gameOverCanvas.SetActive(true);
+        Time.timeScale = 0f; // Se pausa el juego
     }
 }

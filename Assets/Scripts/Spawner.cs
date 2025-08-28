@@ -7,6 +7,8 @@ public class Spawner : MonoBehaviour
 {
     [SerializeField] private Food foodPrefab;
     private ObjectPool<Food> foodPool;
+    private Vector2 randomPoint;
+    private Collider2D foodCollider; // Collider antes de spawnear comida
 
     private void Awake()
     {
@@ -46,14 +48,25 @@ public class Spawner : MonoBehaviour
     {
         while (true)
         {
-            int randX = Random.Range(-15, 15);
-            int randY = Random.Range(-7, 7);
+            int randX = Random.Range(-16, 16);
+            int randY = Random.Range(-8, 8);
             //Vector3 randomPoint = new Vector3(randX + 0.5f, randY + 0.5f, 0f);
-            Vector3 randomPoint = new Vector3(randX, randY, 0f);
-            Food copy = foodPool.Get();
-            copy.transform.position = randomPoint;
-            yield return new WaitForSeconds(2f);
+            randomPoint = new Vector2(randX, randY);
+            
+            foodCollider = ThrowCheck();
+            
+            if (!foodCollider)
+            {
+                Food copy = foodPool.Get();
+                copy.transform.position = randomPoint;
+                yield return new WaitForSeconds(2f);
+            }
         }
 
+    }
+
+    private Collider2D ThrowCheck()
+    {
+        return Physics2D.OverlapCircle(randomPoint, 0.35f);
     }
 }

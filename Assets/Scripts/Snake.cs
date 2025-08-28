@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Snake : MonoBehaviour
@@ -10,17 +11,22 @@ public class Snake : MonoBehaviour
     [SerializeField] private Transform teletransportBottom;
     [SerializeField] private Transform teletransportLeft;
     [SerializeField] private Transform teletransportRight;
+    [SerializeField] private AudioClip foodSound;
+    [SerializeField] private AudioClip hitSound;
 
     private Vector2 direction;
     private Vector2 nextDirection;
     private float moveTimer;
     private List<Transform> segments;
     private Vector2 currentGridPos;
+    private AudioSource sound;
 
     public float MoveRate { get => moveRate; set => moveRate = value; }
 
     void Start()
     {
+        sound = this.GetComponent<AudioSource>();
+
         segments = new List<Transform>();
         segments.Add(this.transform);
         
@@ -38,13 +44,21 @@ public class Snake : MonoBehaviour
     {
         // Capturar la dirección pero sin actualizarla
         if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)) && direction != Vector2.down)
+        {
             nextDirection = Vector2.up;
+        }
         else if ((Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)) && direction != Vector2.up)
+        {
             nextDirection = Vector2.down;
+        }
         else if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) && direction != Vector2.right)
-            nextDirection = Vector2.left;
+        {
+            nextDirection = Vector2.left; 
+        }
         else if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) && direction != Vector2.left)
-            nextDirection = Vector2.right;
+        {
+            nextDirection = Vector2.right; 
+        }
         else if (Input.GetKey(KeyCode.P))
         {
             gameManager.PauseGame();
@@ -91,11 +105,13 @@ public class Snake : MonoBehaviour
     {
         if (other.CompareTag("Wall"))
         {
+            sound.PlayOneShot(hitSound, 1f);
             gameManager.SetGameOver();
-            Destroy(this.gameObject);
+            //Destroy(this.gameObject);
         }
         else if (other.CompareTag("Food"))
         {
+            sound.PlayOneShot(foodSound, 0.8f);
             Grow();
             gameManager.AddScore(1);
         }
